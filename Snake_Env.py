@@ -21,10 +21,10 @@ class SnakeEnv:
     def initialize(self):
         # Set Init Snake Point
         # Snake_point_list = []
-        sx = np.random.randint(0, self.w)
-        sy = np.random.randint(0, self.w)
+        sx = np.random.randint(0, 125/2)
+        sy = np.random.randint(0, 50/2)
         self.snake1 = SnakeContourPoint(1)
-        self.snake1.init_state((sx, sy))
+        self.snake1.init_state((10, 2))
         # self.snake1.init_state((self.w/2, 0))
 
         """
@@ -225,15 +225,10 @@ class SnakeEnv:
 
         # Total Reward
 
-        # print('reward_dist:{:.2f}|reward_orien:{:.2f}|reward_act:{:.2f}'.format(
-        #    0.5*reward_dist, reward_orien, reward_act))
+        print('reward_dist:{:.2f}|reward_orien:{:.2f}|reward_act:{:.2f}'.format(
+            0.5*reward_dist, reward_orien, reward_act))
 
-        #print('x:{:.2f}|y:{:.2f}'.format(self.snake1.x, self.snake1.y))
-
-        if(curr_target_dist < 32):
-            reward_near = 32-curr_target_dist
-        else:
-            reward_near = 0
+        print('x:{:.2f}|y:{:.2f}'.format(self.snake1.x, self.snake1.y))
 
         reward = 0.5*reward_dist + reward_orien + reward_act
         # Terminal State
@@ -241,15 +236,21 @@ class SnakeEnv:
 
         if curr_target_dist < 10:
             """and curr_target_dist2 < 20 and curr_target_dist3 < 20 and curr_target_dist4 < 20"""
-            reward = 100
+            reward = 20
+            done = True
+        # out of bound
+        if self.snake1.x < -10 or self.snake1.x > 72 or self.snake1.y < -10 or self.snake1.y > 60:
+            reward = -20
             done = True
 
         # State Constructor
         self.target_dist = curr_target_dist
+        """
         print('target:({:.2f},{:.2f})|SCP:({:.2f},{:.2f})|curr_target_dist:{:.2f}'.format(
             self.target.x, self.target.y, self.snake1.x, self.snake1.y, self.target_dist))
         print('reward_dist:{:.2f}|reward_orien:{:.2f}|reward_act:{:.2f}'.format(
             0.5*reward_dist, reward_orien, reward_act))
+        """
         state_next = self._construct_state(self.img, self.snake1)
         """, self.snake2, self.snake3, self.snake4"""
         return state_next, reward, done

@@ -88,6 +88,7 @@ class PolicyNetGaussian(nn.Module):
         """
         # concat all
         s_full = torch.cat((img_cov1, img_cov2), 1)
+        # print(s_full)
         # print(s_full.shape)
         # mirror to Q
         h_fc1 = F.relu(self.fc1(s_full))

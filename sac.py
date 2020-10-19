@@ -76,7 +76,7 @@ class SAC():
         s_img = s_img.permute(0, 3, 1, 2)
         # gaussian image
         s_g_img = tool.get_gaussian(
-            s_coord[0, 0].cpu().detach().numpy(), s_coord[0, 1].cpu().detach().numpy(), 16, 32, 128)
+            s_coord[0, 0].cpu().detach().numpy(), s_coord[0, 1].cpu().detach().numpy(), 4, 32, 128)
         """
         # Test block start-gaussian image
         img = np.asarray(s_g_img).astype(float)
@@ -205,7 +205,7 @@ class SAC():
         B, _, _, _ = s_img.shape
         # gaussian image
         s_g_img = tool.get_gaussian(
-            s_coord[0, 0].cpu().detach().numpy(), s_coord[0, 1].cpu().detach().numpy(), 16, 32, 128)
+            s_coord[0, 0].cpu().detach().numpy(), s_coord[0, 1].cpu().detach().numpy(), 4, 32, 128)
         s_g_img = torch.FloatTensor(np.expand_dims(s_g_img, 0)).cuda()
         s_g_img = s_g_img.permute(0, 3, 1, 2)
         """
@@ -219,7 +219,7 @@ class SAC():
         s_g_img_batch = s_g_img
         for i in range(1, B):
             s_g_img = tool.get_gaussian(s_coord[i, 0].cpu().detach(
-            ).numpy(), s_coord[i, 1].cpu().detach().numpy(), 16, 32, 128)
+            ).numpy(), s_coord[i, 1].cpu().detach().numpy(), 4, 32, 128)
             s_g_img = torch.FloatTensor(np.expand_dims(s_g_img, 0)).cuda()
             s_g_img = s_g_img.permute(0, 3, 1, 2)
             """
@@ -231,14 +231,15 @@ class SAC():
             """
             s_g_img_batch = torch.cat((s_g_img_batch, s_g_img), dim=0)
         # concat full image and gaussian image
+        # TODO 1 is this right?
         s_h_img = torch.cat((s_img, s_g_img_batch), dim=1)
-        print(s_h_img.shape)
         # print(np.array(s_batch_np[:, 1:]).astype(float).dtype)
         # cropped image
         # 1.convert coordinate to grid
         B_s_coord, _ = s_coord.shape
         grid1 = tool.get_grid(
             128, 128, s_coord[0, 0], s_coord[0, 1], 32, 32, 32, 32).cuda()
+
         if B_s_coord > 1:
             for i in range(1, B_s_coord):
                 grid_temp = tool.get_grid(
@@ -261,14 +262,14 @@ class SAC():
         B, _, _, _ = sn_img.shape
         # next gaussian image
         sn_g_img = tool.get_gaussian(
-            sn_coord[0, 0].cpu().detach().numpy(), sn_coord[0, 1].cpu().detach().numpy(), 16, 128, 128)
+            sn_coord[0, 0].cpu().detach().numpy(), sn_coord[0, 1].cpu().detach().numpy(), 4, 128, 128)
         sn_g_img = torch.FloatTensor(np.expand_dims(sn_g_img, 0)).cuda()
         sn_g_img = sn_g_img.permute(0, 3, 1, 2)
 
         sn_g_img_batch = sn_g_img
         for i in range(1, B):
             sn_g_img = tool.get_gaussian(sn_coord[i, 0].cpu().detach(
-            ).numpy(), sn_coord[i, 1].cpu().detach().numpy(), 16, 32, 128)
+            ).numpy(), sn_coord[i, 1].cpu().detach().numpy(), 4, 32, 128)
 
             sn_g_img = torch.FloatTensor(np.expand_dims(sn_g_img, 0)).cuda()
 
@@ -279,7 +280,7 @@ class SAC():
 
         # cropped image
         # 1.convert coordinate to grid
-        B_sn_coord, _sn_coordN = sn_coord.shape
+        B_sn_coord, _ = sn_coord.shape
         grid1 = tool.get_grid(
             128, 128, sn_coord[0, 0], sn_coord[0, 1], 32, 32, 32, 32).cuda()
         if B_sn_coord > 1:

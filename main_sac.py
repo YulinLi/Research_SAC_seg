@@ -6,7 +6,7 @@ import os
 import rl_eval
 
 batch_size = 8
-eval_eps = 5
+eval_eps = 2
 rl_core = sac.SAC(
     model=[models.PolicyNetGaussian, models.QNet],
     n_actions=2,
@@ -40,7 +40,7 @@ if __name__ == "__main__":
     total_step = 0
     max_success_rate = 0
     success_count = 0
-    for eps in range(101):
+    for eps in range(1001):
         state = env.initialize()
         step = 0
         loss_a = loss_c = 0.
